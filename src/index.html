@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <title>Socket.IO chat</title>
+    <style>
+        body {
+            margin: 0;
+            padding-bottom: 3rem;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .wrapper {
+            background: rgba(0, 0, 0, 0.15);
+            padding: 0.25rem;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+        }
+
+        #form {
+            display: flex;
+            height: 3rem;
+            box-sizing: border-box;
+            backdrop-filter: blur(10px);
+        }
+
+        #input {
+            border: none;
+            padding: 0 1rem;
+            flex-grow: 1;
+            border-radius: 2rem;
+            margin: 0.25rem;
+        }
+
+        #input:focus {
+            outline: none;
+        }
+
+        #clear,
+        #send {
+            background: #333;
+            border: none;
+            margin: 0.25rem;
+            border-radius: 3px;
+            outline: none;
+            color: #fff;
+        }
+
+        #messages {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #messages>li {
+            padding: 0.5rem 1rem;
+        }
+
+        #messages>li:nth-child(odd) {
+            background: #efefef;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+</head>
+
+<body>
+    <ul id="messages"></ul>
+    <div class="input-group wrapper">
+        <input type="text" id="input" class="form-control" placeholder="Enter message.." autocomplete="off">
+        <button class="btn btn-outline-secondary" type="button" id="send"><i class="bi bi-send-fill"></i></button>
+        <button class="btn btn-outline-secondary" type="button" id="clear">Clear</button>
+    </div>
+    <!-- <div class="wrapper">
+        <form id="form" action="">
+            <input id="input" autocomplete="off" required />
+            <button type="submit">Send</button>
+        </form>
+        <button id="clear">Clear</button>
+    </div> -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+
+        window.addEventListener('load', () => {
+
+            const userName = prompt("Enter username : ");
+
+            if (userName && userName !== undefined) {
+
+                const user = {
+                    userId: 1,
+                    userName: userName
+                }
+
+
+                var socket = io({ query: user });
+
+
+                socket.on('connect', () => {
+                    alert('connected to the server connection id : ' + socket.id);
+                });
+
+                var send = document.getElementById('send');
+                var input = document.getElementById('input');
+                var clearBtn = document.getElementById('clear');
+
+
+                const sendMsg = () => {
+                    if (input.value && input.value !== undefined) {
+
+                        console.log(input.value);
+
+                        const sendObj = {
+                            msg: input.value,
+                            user: user
+                        }
+                        socket.emit('chat message', sendObj);
+                        var item = document.createElement('li');
+                        item.textContent = input.value;
+                        messages.appendChild(item);
+                        input.value = '';
+                        window.scrollTo(0, document.body.scrollHeight);
+                    } else {
+                        alert('Enter the msg');
+                        input.focus();
+                    }
+                }
+
+                window.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        sendMsg();
+                    }
+                })
+
+                send.addEventListener('click', function (e) {
+                    sendMsg();
+                });
+
+                clearBtn.addEventListener('click', () => {
+                    messages.innerHTML = '';
+                });
+
+
+                socket.on('new connection', (msg) => {
+                    alert(msg);
+                })
+                socket.on('user left', (msg) => {
+                    alert(msg);
+                })
+
+                input.addEventListener('change', () => {
+                    // console.log(input.value);
+                    socket.emit('typing', user);
+                });
+
+
+                socket.on('typing', (obj) => {
+                    console.log(obj);
+                    var item = document.createElement('li');
+                    item.textContent = obj.userName + ' is typing....';
+                    messages.appendChild(item);
+                });
+
+
+
+                socket.on('chat message', (obj) => {
+                    // console.log(obj);
+                    const { msg, user } = obj;
+                    var item = document.createElement('li');
+                    item.textContent = msg;
+                    messages.appendChild(item);
+                    window.scrollTo(0, document.body.scrollHeight);
+                });
+            }
+            else {
+                alert('Kindly enter your name');
+                location.reload();
+                return;
+            }
+
+        });
+
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

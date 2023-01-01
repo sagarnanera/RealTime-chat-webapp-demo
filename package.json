@@ -1,0 +1,17 @@
+{
+  "name": "realtime-chat-app",
+  "version": "1.0.0",
+  "description": "This is basic chat application using socketIO.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "author": "sagar nanera",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemon": "^2.0.20",
+    "socket.io": "^4.5.4"
+  }
+}
