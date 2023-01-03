@@ -3,7 +3,7 @@
 
 This is basic chatting application/webapp in groups.
 
-this is build with nodeJS and SocketIO.
+This is build with nodeJS and SocketIO.
 
 
 
