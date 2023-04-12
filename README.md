@@ -1,7 +1,7 @@
 # RealTime-chat-webapp
 
 
-This is basic chatting application/webapp in groups.
+This is basic chatting application/webapp for chatting in groups.
 
 This is build with nodeJS and SocketIO.
 
